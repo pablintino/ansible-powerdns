@@ -1,0 +1,61 @@
+---
+- name: Converge
+  hosts: all
+  become: yes
+  pre_tasks:
+    - name: Generate/gather DB root credentials
+      set_fact:
+        mariadb_root_passwd: "{{lookup('password', playbook_dir + '/../data/credentials/' + inventory_hostname +'_mariadb_pass_crypt.txt length=32 chars=ascii_letters,digits,punctuation encrypt=md5_crypt') }}"
+    
+    - name: Output generated credentials
+      debug:
+        msg: "Host {{ inventory_hostname }} pwd '{{ mariadb_root_passwd }}'"
+
+    - name: Generate/gather DB replication credentials
+      set_fact:
+        mariadb_replica_passwd: "{{ lookup('password', playbook_dir + '/../data/credentials/mariadb_replica_pass_crypt.txt length=32 chars=ascii_letters,digits,punctuation encrypt=md5_crypt') }}"
+
+    - name: Output DB replica credential
+      debug:
+        msg: "Replication pwd '{{ mariadb_replica_passwd }}'"
+    
+    - name: Generate/gather pdns DB user credentials
+      set_fact:
+        pdns_db_user_passwd: "{{lookup('password', playbook_dir + '/../data/credentials/' + inventory_hostname +'_pdns_pass_crypt.txt length=32 chars=ascii_letters,digits,punctuation encrypt=md5_crypt') }}"
+    
+    - name: Output generated pdns DB user credentials
+      debug:
+        msg: "Host {{ inventory_hostname }} pwd '{{ pdns_db_user_passwd }}'"
+
+  tasks:
+    - name: Execute MariaDB tasks
+      include_role:
+        name: geerlingguy.mysql
+
+    - name: Copy schema file to master
+      copy:
+        src: "{{ playbook_dir }}/../data/pdns/schema.mysql.sql"
+        dest: schema.mysql.sql
+        force: yes
+      when: "'master' in group_names"
+
+    - name: Execute pdns SQL schema
+      mysql_db: 
+        name: pdns
+        state: import
+        target: schema.mysql.sql
+      when: "'master' in group_names"
+    
+    - name: Execute PDNS tasks
+      include_role:
+        name: powerdns.pdns
+      vars:
+        # Not ready as a default in pdns 1.7.0 plugin yet
+        pdns_install_repo:
+          apt_repo_origin: "repo.powerdns.com"
+          apt_repo: "deb [arch=amd64] http://repo.powerdns.com/{{ ansible_distribution | lower }} {{ ansible_distribution_release | lower }}-auth-45 main"
+          gpg_key: "http://repo.powerdns.com/FD380FBB-pub.asc"
+          gpg_key_id: "9FAAA5577E8FCF62093D036C1B0C6205FD380FBB"
+          yum_repo_baseurl: "http://repo.powerdns.com/centos/$basearch/$releasever/auth-45"
+          yum_debug_symbols_repo_baseurl: "http://repo.powerdns.com/centos/$basearch/$releasever/auth-45/debug"
+          name: "powerdns-auth-45"

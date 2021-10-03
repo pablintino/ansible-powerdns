@@ -1,0 +1,31 @@
+mysql_root_password: "{{ mariadb_root_passwd }}"
+mysql_bind_address: '0.0.0.0'
+mysql_replication_master: "{{hostvars[groups['master'][0]].ansible_host}}"
+mysql_replication_user:
+  name: replication_user
+  host: "%"
+  password: "{{ mariadb_replica_passwd }}"
+
+
+mysql_packages:
+  - mariadb-client
+  - mariadb-server
+
+mysql_databases:
+  - name: pdns
+    encoding: latin1
+    collation: latin1_general_ci
+    replicate: 1
+
+mysql_users:
+  - name: pdns_user
+    host: "localhost"
+    password: "{{ pdns_db_user_passwd }}"
+    priv: "pdns.*:ALL"
+
+pdns_backends:
+  'gmysql':
+    'user': pdns_user
+    'host': 127.0.0.1
+    'password': "{{ pdns_db_user_passwd }}"
+    'dbname': pdns

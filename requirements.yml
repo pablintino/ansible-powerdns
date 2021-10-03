@@ -1,0 +1,6 @@
+---
+roles:
+  - name: geerlingguy.mysql
+    version: 3.3.2
+  - name: powerdns.pdns
+    version: 1.7.0

@@ -1,0 +1,12 @@
+pdns_config:
+  master: yes
+  slave: no
+  local-address: "{{ ansible_host }}"
+  local-port: '5300'
+
+mysql_server_id: "{{ mysql_server_id }}"
+mysql_replication_role: 'master'
+
+mysql_max_binlog_size: "100M"
+mysql_binlog_format: "ROW"
+mysql_expire_logs_days: "10"

@@ -1,0 +1,8 @@
+pdns_config:
+  master: no
+  slave: yes
+  local-address: "{{ ansible_host }}"
+  local-port: '5300'
+
+mysql_server_id: "{{ mysql_server_id }}"
+mysql_replication_role: 'slave'
