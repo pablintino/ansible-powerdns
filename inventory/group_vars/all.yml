@@ -1,6 +1,6 @@
 mysql_root_password: "{{ mariadb_root_passwd }}"
 mysql_bind_address: '0.0.0.0'
-mysql_replication_master: "{{hostvars[groups['master'][0]].ansible_host}}"
+mysql_replication_master: "{{hostvars[groups['master'][0]].server_ip | ipaddr('address') }}"
 mysql_replication_user:
   name: replication_user
   host: "%"
