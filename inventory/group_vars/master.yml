@@ -7,7 +7,7 @@ pdns_config:
   webserver-address: "{{ server_ip | ipaddr('address') }}"
   webserver-allow-from: "{{ server_ip | ipaddr('network') }}/{{ server_ip | ipaddr('prefix') }}"
   api: yes
-  api-key: "{{ pdns_api_key }}"
+  api-key: "{{ vault_pdns_api_key }}"
 
 mysql_server_id: "{{ mysql_server_id }}"
 mysql_replication_role: 'master'
