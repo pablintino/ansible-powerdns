@@ -4,3 +4,5 @@ roles:
     version: 3.3.2
   - name: powerdns.pdns
     version: 1.7.0
+  - name: powerdns.pdns_recursor
+    version: 1.5.0

@@ -6,7 +6,6 @@ mysql_replication_user:
   host: "%"
   password: "{{ vault_mysql_replication_user_password }}"
 
-
 mysql_packages:
   - mariadb-client
   - mariadb-server
@@ -23,9 +22,19 @@ mysql_users:
     password: "{{ vault_mysql_pdns_user_password }}"
     priv: "pdns.*:ALL"
 
+pdns_auth_port: 5300
+
 pdns_backends:
   'gmysql':
     'user': pdns_user
     'host': 127.0.0.1
     'password': "{{ vault_mysql_pdns_user_password }}"
     'dbname': pdns
+
+pdns_rec_config:
+  local-port: '53'
+  local-address: "{{ server_ip | ipaddr('address') }}"
+  dnssec: 'off'
+  forward-zones:
+    - "pablintino.net={{ server_ip | ipaddr('address') }}:{{ pdns_auth_port }}"
+  forward-zones-recurse: ".=8.8.8.8;8.8.4.4"

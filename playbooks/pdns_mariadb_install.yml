@@ -37,3 +37,17 @@
           yum_repo_baseurl: "http://repo.powerdns.com/centos/$basearch/$releasever/auth-45"
           yum_debug_symbols_repo_baseurl: "http://repo.powerdns.com/centos/$basearch/$releasever/auth-45/debug"
           name: "powerdns-auth-45"
+    
+    - name: Execute PDNS recursor setup tasks
+      include_role:
+        name: powerdns.pdns_recursor
+      vars:
+        # Not ready as a default in pdns_recursor 1.5.0 plugin yet
+        pdns_rec_install_repo:
+          apt_repo_origin: "repo.powerdns.com"
+          apt_repo: "deb [arch=amd64] http://repo.powerdns.com/{{ ansible_distribution | lower }} {{ ansible_distribution_release | lower }}-rec-46 main"
+          gpg_key: "http://repo.powerdns.com/FD380FBB-pub.asc"
+          gpg_key_id: "9FAAA5577E8FCF62093D036C1B0C6205FD380FBB"
+          yum_repo_baseurl: "http://repo.powerdns.com/centos/$basearch/$releasever/auth-46"
+          yum_debug_symbols_repo_baseurl: "http://repo.powerdns.com/centos/$basearch/$releasever/rec-46/debug"
+          name: "powerdns-rec-46"

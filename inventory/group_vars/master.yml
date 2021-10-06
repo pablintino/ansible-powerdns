@@ -1,17 +1,17 @@
-pdns_config:
-  master: yes
-  slave: no
-  local-address: "{{ server_ip | ipaddr('address') }}"
-  local-port: '5300'
-  webserver: yes
-  webserver-address: "{{ server_ip | ipaddr('address') }}"
-  webserver-allow-from: "{{ server_ip | ipaddr('network') }}/{{ server_ip | ipaddr('prefix') }}"
-  api: yes
-  api-key: "{{ vault_pdns_api_key }}"
-
 mysql_server_id: "{{ mysql_server_id }}"
 mysql_replication_role: 'master'
 
 mysql_max_binlog_size: "100M"
 mysql_binlog_format: "ROW"
 mysql_expire_logs_days: "10"
+
+pdns_config:
+  master: yes
+  slave: no
+  local-address: "{{ server_ip | ipaddr('address') }}"
+  local-port: "{{ pdns_auth_port }}"
+  webserver: yes
+  webserver-address: "{{ server_ip | ipaddr('address') }}"
+  webserver-allow-from: "{{ server_ip | ipaddr('network') }}/{{ server_ip | ipaddr('prefix') }}"
+  api: yes
+  api-key: "{{ vault_pdns_api_key }}"
